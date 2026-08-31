@@ -1,0 +1,26 @@
+version: "3.3"
+
+networks:
+  default:
+    external:
+      name: ${APP_NAME}
+
+services:
+
+  spug:
+    image: registry.cn-hangzhou.aliyuncs.com/huangyalong/openspug_spug-service:ubuntu2204
+    container_name: ${APP_NAME}-spug
+    privileged: true
+    ports:
+      - "${SPUG_PORT}:80"
+    environment:
+      - "MYSQL_DATABASE=spug"
+      - "MYSQL_USER=root"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+      - "MYSQL_HOST=${APP_NAME}-mysql"
+      - "MYSQL_PORT=3306"
+      - "TZ=Asia/Shanghai"
+    volumes:
+      - "$PWD/service:/data/spug"
+      - "$PWD/repos:/data/repos"
+    restart: unless-stopped
