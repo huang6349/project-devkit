@@ -147,3 +147,10 @@ http-client.private.env.json
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+### Project ###
+# 本地环境变量（含密码，不入库）
+.env
+
+# Claude Code local tasks
+/.claude/tasks/

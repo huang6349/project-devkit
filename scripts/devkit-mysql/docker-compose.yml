@@ -1,0 +1,23 @@
+version: "3.3"
+
+networks:
+  default:
+    external:
+      name: ${APP_NAME}
+
+services:
+
+  mysql:
+    image: registry.cn-hangzhou.aliyuncs.com/huangyalong/mysql:8.0.42
+    container_name: ${APP_NAME}-mysql
+    privileged: true
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}"
+      - "TZ=Asia/Shanghai"
+    volumes:
+      - "$PWD/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf:ro"
+      - "$PWD/data:/var/lib/mysql"
+      - "$PWD/log:/var/log/mysql"
+    restart: unless-stopped
