@@ -15,3 +15,6 @@ mkdir -p $WORKDIR/service
 mkdir -p $WORKDIR/repos
 chmod -R 777 $WORKDIR/.
 docker-compose -p ${APP_NAME}-spug up -d --build
+
+# 初始化管理员（仅首次）
+sh init-user.sh
