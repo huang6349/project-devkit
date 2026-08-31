@@ -17,5 +17,6 @@ docker network create ${APP_NAME} 2>/dev/null || true
 
 # 启动服务
 cd $WORKDIR/devkit-mysql/ && sh start.sh
+cd $WORKDIR/devkit-gitea/ && sh start.sh
 
 docker ps |grep -E ${APP_NAME}

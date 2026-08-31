@@ -17,6 +17,7 @@ services:
       - "MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}"
       - "TZ=Asia/Shanghai"
     volumes:
+      - "$PWD/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro"
       - "$PWD/mysqld.cnf:/etc/mysql/conf.d/mysqld.cnf:ro"
       - "$PWD/data:/var/lib/mysql"
       - "$PWD/log:/var/log/mysql"
