@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# 安装 NVM + Node lts/jod + pnpm@10（持久化于 /data/spug/opt/nvm，全走国内镜像）
-set -e
-. /data/env/lib.sh
+# NVM + Node lts/jod + pnpm@10（持久化于 /data/spug/opt/nvm，全走国内镜像）
 export NVM_DIR=/data/spug/opt/nvm
-mkdir -p "${NVM_DIR}"
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
 NVM_VERSION=0.40.7
 NODE_ALIAS=lts/jod
 
-# 安装 NVM（手动放置 nvm.sh，已存在则跳过；不用安装器：其固定装到 /root/.nvm 且内部依赖 curl）
+# 准备
+mkdir -p ${NVM_DIR}
+
+# 安装 nvm.sh（已存在则跳过）
 if [ ! -f "${NVM_DIR}/nvm.sh" ]; then
     echo "==> 安装 NVM v${NVM_VERSION}"
-    download "https://gitee.com/mirrors/nvm/raw/v${NVM_VERSION}/nvm.sh" "${NVM_DIR}/nvm.sh"
+    wget -qO "${NVM_DIR}/nvm.sh" "https://gitee.com/mirrors/nvm/raw/v${NVM_VERSION}/nvm.sh" || exit 1
 fi
 
-. "${NVM_DIR}/nvm.sh"
+. "${NVM_DIR}/nvm.sh" || exit 1
 
 # nvm 内部下载 node 依赖 curl/wget，两者皆无时提前失败并给出处理建议
 if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then
@@ -33,9 +33,13 @@ if ! ls "${NVM_DIR}/versions/node/"v22.* >/dev/null 2>&1; then
     fi
     rm -f /tmp/nvm-node.log
 fi
-nvm alias default "${NODE_ALIAS}" >/dev/null
+nvm alias default "${NODE_ALIAS}" >/dev/null || true
 
-NODE_BIN=$(ls -d "${NVM_DIR}/versions/node/"v22.* | sort -V | tail -1)/bin
+NODE_BIN=$(ls -d "${NVM_DIR}/versions/node/"v22.* 2>/dev/null | sort -V | tail -1)/bin
+if [ ! -x "${NODE_BIN}/node" ]; then
+    echo "==> Node 安装未完成，无法继续"
+    exit 1
+fi
 
 # 安装 pnpm@10（已有 10.x 则跳过，输出重定向，失败时输出）
 if ! "${NODE_BIN}/pnpm" -v 2>/dev/null | grep -q "^10"; then
@@ -53,4 +57,4 @@ ln -sf ${NODE_BIN}/node /usr/local/bin/node
 ln -sf ${NODE_BIN}/npm /usr/local/bin/npm
 ln -sf ${NODE_BIN}/npx /usr/local/bin/npx
 ln -sf ${NODE_BIN}/pnpm /usr/local/bin/pnpm
-echo "==> Node 就绪: $(node -v), pnpm $(pnpm -v)"
+echo "==> Node 就绪: $(node -v 2>&1), pnpm $(pnpm -v 2>&1)"
