@@ -9,9 +9,9 @@ if [ -f /data/spug/.spug-initialized ]; then
     exit 0
 fi
 
-# 等待服务就绪（最多 120s）
+# 等待服务就绪（最多 120s，迁移/建号日志重定向，失败时输出）
 for i in $(seq 1 24); do
-    if init_spug "${SPUG_USER}" "${SPUG_PASSWORD}"; then
+    if init_spug "${SPUG_USER}" "${SPUG_PASSWORD}" >/tmp/init-user.log 2>&1; then
         touch /data/spug/.spug-initialized
         echo "==> 管理员 ${SPUG_USER} 初始化完成"
         exit 0
@@ -19,5 +19,7 @@ for i in $(seq 1 24); do
     sleep 5
 done
 
-echo "==> 初始化未完成，请重跑 sh start.sh"
+echo "==> 初始化未完成，最近一次执行日志如下:"
+tail -50 /tmp/init-user.log 2>/dev/null
+echo "    请排查后重跑 sh start.sh"
 exit 1

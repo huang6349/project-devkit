@@ -23,19 +23,29 @@ if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then
     exit 1
 fi
 
-# 安装 Node（已有 v22.x 则跳过）
+# 安装 Node（已有 v22.x 则跳过，下载日志重定向，失败时输出）
 if ! ls "${NVM_DIR}/versions/node/"v22.* >/dev/null 2>&1; then
     echo "==> 安装 Node ${NODE_ALIAS}"
-    nvm install "${NODE_ALIAS}"
+    if ! nvm install "${NODE_ALIAS}" >/tmp/nvm-node.log 2>&1; then
+        echo "==> Node 安装失败，日志如下:"
+        cat /tmp/nvm-node.log
+        exit 1
+    fi
+    rm -f /tmp/nvm-node.log
 fi
-nvm alias default "${NODE_ALIAS}"
+nvm alias default "${NODE_ALIAS}" >/dev/null
 
 NODE_BIN=$(ls -d "${NVM_DIR}/versions/node/"v22.* | sort -V | tail -1)/bin
 
-# 安装 pnpm@10（已有 10.x 则跳过）
+# 安装 pnpm@10（已有 10.x 则跳过，输出重定向，失败时输出）
 if ! "${NODE_BIN}/pnpm" -v 2>/dev/null | grep -q "^10"; then
     echo "==> 安装 pnpm@10"
-    npm --registry=https://registry.npmmirror.com install -g pnpm@10
+    if ! npm --registry=https://registry.npmmirror.com install -g pnpm@10 >/tmp/pnpm-install.log 2>&1; then
+        echo "==> pnpm 安装失败，日志如下:"
+        cat /tmp/pnpm-install.log
+        exit 1
+    fi
+    rm -f /tmp/pnpm-install.log
 fi
 
 # 命令链接每次确保（容器重建后 /usr/local/bin 会丢失）
