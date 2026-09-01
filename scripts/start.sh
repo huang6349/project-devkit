@@ -16,6 +16,7 @@ APP_NAME=${APP_NAME:-devkit}
 docker network create ${APP_NAME} 2>/dev/null || true
 
 # 启动服务
+cd $WORKDIR/devkit-portainer/ && sh start.sh
 cd $WORKDIR/devkit-mysql/ && sh start.sh
 cd $WORKDIR/devkit-gitea/ && sh start.sh
 cd $WORKDIR/devkit-spug/ && sh start.sh

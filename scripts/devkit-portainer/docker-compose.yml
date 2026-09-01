@@ -1,0 +1,21 @@
+version: "3.3"
+
+networks:
+  default:
+    external:
+      name: ${APP_NAME}
+
+services:
+
+  portainer-ce:
+    image: registry.cn-hangzhou.aliyuncs.com/huangyalong/portainer-ce:2.27.9-alpine
+    container_name: ${APP_NAME}-portainer
+    privileged: true
+    ports:
+      - "${PORTAINER_PORT}:9000"
+    environment:
+      - "TZ=Asia/Shanghai"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "$PWD/data:/data"
+    restart: unless-stopped
