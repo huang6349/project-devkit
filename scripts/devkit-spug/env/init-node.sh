@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# NVM + Node lts/jod + pnpm@10（持久化于 /data/spug/opt/nvm，全走国内镜像）
+# NVM + Node lts/jod（持久化于 /data/spug/opt/nvm，全走国内镜像）
 export NVM_DIR=/data/spug/opt/nvm
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
 NVM_VERSION=0.40.7
@@ -41,20 +41,8 @@ if [ ! -x "${NODE_BIN}/node" ]; then
     exit 1
 fi
 
-# 安装 pnpm@10（已有 10.x 则跳过，输出重定向，失败时输出）
-if ! "${NODE_BIN}/pnpm" -v 2>/dev/null | grep -q "^10"; then
-    echo "==> 安装 pnpm@10"
-    if ! npm --registry=https://registry.npmmirror.com install -g pnpm@10 >/tmp/pnpm-install.log 2>&1; then
-        echo "==> pnpm 安装失败，日志如下:"
-        cat /tmp/pnpm-install.log
-        exit 1
-    fi
-    rm -f /tmp/pnpm-install.log
-fi
-
 # 命令链接每次确保（容器重建后 /usr/local/bin 会丢失）
 ln -sf ${NODE_BIN}/node /usr/local/bin/node
 ln -sf ${NODE_BIN}/npm /usr/local/bin/npm
 ln -sf ${NODE_BIN}/npx /usr/local/bin/npx
-ln -sf ${NODE_BIN}/pnpm /usr/local/bin/pnpm
-echo "==> Node 就绪: $(node -v 2>&1), pnpm $(pnpm -v 2>&1)"
+echo "==> Node 就绪: $(node -v 2>&1)"
