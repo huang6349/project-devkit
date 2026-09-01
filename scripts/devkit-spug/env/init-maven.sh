@@ -4,6 +4,7 @@ set -e
 . /data/env/lib.sh
 OPT_DIR=/data/spug/opt
 MAVEN_VERSION=3.9.5
+mkdir -p ${OPT_DIR}
 
 # 下载解压（已存在则跳过）
 if [ ! -d "${OPT_DIR}/apache-maven-${MAVEN_VERSION}" ]; then

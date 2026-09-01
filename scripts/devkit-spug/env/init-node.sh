@@ -3,14 +3,15 @@
 set -e
 . /data/env/lib.sh
 export NVM_DIR=/data/spug/opt/nvm
+mkdir -p "${NVM_DIR}"
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
+NVM_VERSION=0.40.7
 NODE_ALIAS=lts/jod
 
-# 安装 NVM（已存在则跳过，PROFILE=/dev/null 避免改写 /root/.bashrc）
+# 安装 NVM（手动放置 nvm.sh，已存在则跳过；不用安装器：其固定装到 /root/.nvm 且内部依赖 curl）
 if [ ! -f "${NVM_DIR}/nvm.sh" ]; then
-    echo "==> 安装 NVM"
-    download "https://gitee.com/RubyMetric/nvm-cn/raw/main/install.sh" /tmp/nvm-install.sh
-    PROFILE=/dev/null bash /tmp/nvm-install.sh
+    echo "==> 安装 NVM v${NVM_VERSION}"
+    download "https://gitee.com/mirrors/nvm/raw/v${NVM_VERSION}/nvm.sh" "${NVM_DIR}/nvm.sh"
 fi
 
 . "${NVM_DIR}/nvm.sh"

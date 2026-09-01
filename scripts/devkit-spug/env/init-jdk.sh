@@ -4,6 +4,7 @@ set -e
 . /data/env/lib.sh
 OPT_DIR=/data/spug/opt
 JDK_VERSION=17.0.2
+mkdir -p ${OPT_DIR}
 
 # 下载解压（已存在则跳过）
 if [ ! -d "${OPT_DIR}/jdk-${JDK_VERSION}" ]; then
